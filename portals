@@ -1,0 +1,120 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useDropzone } from "react-dropzone";
+
+export default function BatmanFinalPolish() {
+  const [logs, setLogs] = useState("// Logs stream here...");
+  const [aiInput, setAiInput] = useState("");
+  const [aiOutput, setAiOutput] = useState("Awaiting command...");
+  const [droppedFiles, setDroppedFiles] = useState([]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => setDroppedFiles(acceptedFiles.map(f => f.name))
+  });
+
+  const handleAISubmit = () => {
+    setAiOutput(`🧠 AI Response: Interpreting "${aiInput}"...`);
+  };
+
+  const fishletExamples = [
+    "Visa Login Portal",
+    "Bank of America",
+    "PayPal",
+    "Chase Online",
+    "Stripe Access Portal",
+    "Cash App",
+    "Apple ID",
+    "Google Sign-In",
+    "Amazon",
+    "Wells Fargo",
+    "Capital One",
+    "Citibank",
+    "Facebook",
+    "Instagram",
+    "Snapchat",
+    "LinkedIn",
+    "Outlook",
+    "Yahoo Mail",
+    "Gmail",
+    "GitHub Login"
+  ];
+
+  return (
+    <div className="bg-black min-h-screen text-green-400 p-4">
+      <h1 className="text-3xl font-bold border-b border-green-600 pb-2">
+        🦇 Batman Final Polish – AI & Drag+Drop
+      </h1>
+
+      <Tabs defaultValue="ai">
+        <TabsList className="bg-green-900/20">
+          <TabsTrigger value="ai">AI Brain</TabsTrigger>
+          <TabsTrigger value="files">File Drop</TabsTrigger>
+          <TabsTrigger value="logs">Live Logs</TabsTrigger>
+          <TabsTrigger value="fishlets">Fishlets</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ai">
+          <Card className="bg-green-900/10">
+            <CardContent className="p-4 grid gap-4">
+              <Textarea
+                value={aiInput}
+                onChange={(e) => setAiInput(e.target.value)}
+                placeholder="Type a command or question..."
+                className="bg-green-950 text-green-400 h-24"
+              />
+              <Button className="bg-green-700" onClick={handleAISubmit}>Ask AI</Button>
+              <div className="text-green-300 bg-green-950 p-3 rounded shadow-inner">
+                {aiOutput}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="files">
+          <Card className="bg-green-900/10">
+            <CardContent className="p-4">
+              <div {...getRootProps()} className="border border-green-700 border-dashed p-8 rounded cursor-pointer hover:bg-green-950">
+                <input {...getInputProps()} />
+                <p>🗂 Drag & Drop Files Here</p>
+              </div>
+              <ul className="mt-4 text-green-400 list-disc list-inside">
+                {droppedFiles.map((file, idx) => (
+                  <li key={idx}>{file}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="logs">
+          <Card className="bg-green-900/10">
+            <CardContent className="p-4">
+              <Textarea
+                className="bg-green-950 text-green-400 h-64"
+                value={logs}
+                readOnly
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="fishlets">
+          <Card className="bg-green-900/10">
+            <CardContent className="p-4">
+              <h2 className="text-xl font-semibold mb-2">🎭 Fishlet Portals</h2>
+              <ul className="text-green-400 list-disc list-inside grid grid-cols-2 gap-2">
+                {fishletExamples.map((site, i) => (
+                  <li key={i}>{site}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
